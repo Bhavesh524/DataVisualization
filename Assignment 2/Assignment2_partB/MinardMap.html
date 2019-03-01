@@ -1,0 +1,348 @@
+    <html> <head>
+    <title>Minard map </title>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    </head>
+    <style>
+
+h1 {
+font-family:arial
+}
+
+h2 {
+font-family:sans-serif
+}
+
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: blue;
+    }
+
+    .axis text {
+        font-family: arial;
+        font-size: 12px;
+    }
+
+    text {
+        font-family: arial;
+        font-size: 14px;
+    }
+
+.grid .tick {
+    stroke: black;
+    opacity: 0.5;
+}
+.grid path {
+      stroke-width: 0;
+}
+.grid .tick {
+    stroke: grey;
+    opacity: 0.5;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+
+</style>
+    <body>
+    <script src="script.js"></script>
+
+    <script>
+
+var minard = {};
+
+minard.location =
+    [{"lon": 24.0 ,"lat":55.0 ,"name":"Kowno" },
+     {"lon": 25.3 ,"lat":54.7 ,"name":"Wilna" },
+     {"lon": 26.4 ,"lat":54.4 ,"name":"Smorgoni",dir:-1},
+     {"lon": 26.8 ,"lat":54.3 ,"name":"Molodexno",dir:-1},
+     {"lon": 27.7 ,"lat":55.2 ,"name":"Gloubokoe"},
+     {"lon": 27.6 ,"lat":53.9 ,"name":"Minsk",dir:-1},
+     {"lon": 28.5 ,"lat":54.3 ,"name":"Studienska",dir:-1},
+     {"lon": 28.7 ,"lat":55.5 ,"name":"Polotzk"},
+     {"lon": 29.2 ,"lat":54.4 ,"name":"Bobr",dir:-1},
+     {"lon": 30.2 ,"lat":55.3 ,"name":"Witebsk"},
+     {"lon": 30.4 ,"lat":54.5 ,"name":"Orscha",dir:-1},
+     {"lon": 30.4 ,"lat":53.9 ,"name":"Mohilow",dir:-1},
+     {"lon": 32.0 ,"lat":54.8 ,"name":"Smolensk"},
+     {"lon": 33.2 ,"lat":54.9 ,"name":"Dorogobouge"},
+     {"lon": 34.3 ,"lat":55.2 ,"name":"Wixma",dir:-1},
+     {"lon": 34.4 ,"lat":55.5 ,"name":"Chjat"},
+     {"lon": 36.0 ,"lat":55.5 ,"name":"Mojaisk"},
+     {"lon": 37.6 ,"lat":55.8 ,"name":"Moscou"},
+     {"lon": 36.6 ,"lat":55.3 ,"name":"Tarantino",dir:-1},
+     {"lon": 36.5 ,"lat":55.0 ,"name":"Malo-jarosewli",dir:-1}
+    ]
+
+minard.temperature = [
+    {lon:37.6, temp:0,   date:"18 Oct 1812"},
+    {lon:36.0, temp:0,   date:"24 Oct 1812"},
+    {lon:33.2, temp:-9,  date:"09 Nov 1812"},
+    {lon:32.0, temp:-21, date:"14 Nov 1812"},
+    {lon:29.2, temp:-11, date:"24 Nov 1812"},
+    {lon:28.5, temp:-20, date:"28 Nov 1812"},
+    {lon:27.2, temp:-24, date:"01 Dec 1812"},
+    {lon:26.7, temp:-30, date:"06 Dec 1812"},
+    {lon:25.3, temp:-26, date:"07 Dec 1812"}
+];
+
+minard.army = [
+    /* Group 1 */
+    {lon:24.0,  lat:54.9,  size:340000, dir:1,  group:1},
+    {lon:24.5,  lat:55.0,  size:340000, dir:1,  group:1},
+    {lon:25.5,  lat:54.6,  size:340000, dir:1,  group:1},
+    {lon:26.0,  lat:54.7,  size:320000, dir:1,  group:1},
+    {lon:27.0,  lat:54.8,  size:300000, dir:1,  group:1},
+    {lon:28.0,  lat:54.9,  size:280000, dir:1,  group:1},
+    {lon:28.5,  lat:55.0,  size:240000, dir:1,  group:1},
+    {lon:29.0,  lat:55.1,  size:210000, dir:1,  group:1},
+    {lon:30.0,  lat:55.2,  size:180000, dir:1,  group:1},
+    {lon:30.3,  lat:55.3,  size:175000, dir:1,  group:1},
+    {lon:32.0,  lat:54.8,  size:145000, dir:1,  group:1},
+    {lon:33.2,  lat:54.9,  size:140000, dir:1,  group:1},
+    {lon:34.4,  lat:55.5,  size:127100, dir:1,  group:1},
+    {lon:35.5,  lat:55.4,  size:100000, dir:1,  group:1},
+    {lon:36.0,  lat:55.5,  size:100000, dir:1,  group:1},
+    {lon:37.6,  lat:55.8,  size:100000, dir:-1,  group:1},
+    {lon:37.65, lat:55.65, size:100000, dir:-1, group:1},
+    {lon:37.45, lat:55.62, size:98000,  dir:-1, group:1},
+    {lon:37.0,  lat:55.0,  size:97000,  dir:-1, group:1},
+    {lon:36.8,  lat:55.0,  size:96000,  dir:-1, group:1},
+    {lon:35.4,  lat:55.3,  size:87000,  dir:-1, group:1},
+    {lon:34.3,  lat:55.2,  size:55000,  dir:-1, group:1},
+    {lon:33.3,  lat:54.8,  size:37000,  dir:-1, group:1},
+    {lon:32.0,  lat:54.6,  size:24000,  dir:-1, group:1},
+    {lon:30.4,  lat:54.4,  size:20000,  dir:-1, group:1},
+    {lon:29.2,  lat:54.3,  size:20000,  dir:-1, group:1},
+    {lon:29.13, lat:54.29, size:50000,  dir:-1, group:1},
+    {lon:28.5,  lat:54.2,  size:50000,  dir:-1, group:1},
+    {lon:28.3,  lat:54.3,  size:48000,  dir:-1, group:1},
+    {lon:26.8,  lat:54.3,  size:12000,  dir:-1, group:1},
+    {lon:26.8,  lat:54.4,  size:14000,  dir:-1, group:1},
+    {lon:25.0,  lat:54.4,  size:8000,   dir:-1, group:1},
+    {lon:24.4,  lat:54.4,  size:4000,   dir:-1, group:1},
+    {lon:24.2,  lat:54.4,  size:4000,   dir:-1, group:1},
+    {lon:24.1,  lat:54.4,  size:4000,   dir:-1, group:1},
+    /* Group 2 */
+    {lon:24.0,  lat:55.1,  size:60000,  dir:1,  group:2},
+    {lon:24.5,  lat:55.2,  size:60000,  dir:1,  group:2},
+    {lon:25.5,  lat:54.7,  size:60000,  dir:1,  group:2},
+    {lon:26.6,  lat:55.7,  size:40000,  dir:1,  group:2},
+    {lon:27.4,  lat:55.6,  size:33000,  dir:1,  group:2},
+    {lon:28.7,  lat:55.5,  size:33000,  dir:-1, group:2},
+    {lon:29.2,  lat:54.29, size:30000,  dir:-1, group:2},
+    /* Group 3 */
+    {lon:24.0,  lat:55.2,  size:22000,  dir:1,  group:3},
+    {lon:24.5,  lat:55.3,  size:22000,  dir:1,  group:3},
+    {lon:24.6,  lat:55.8,  size:6000,   dir:-1, group:3},
+    {lon:24.2,  lat:54.4,  size:6000,   dir:-1, group:3},
+    {lon:24.1,  lat:54.4,  size:6000,   dir:-1, group:3}
+];
+</script>
+
+    <h1>Minard's Map </h1>
+</div>
+
+
+    <script>
+    var  width=1500,height=700;
+reload = function() {
+d3.selectAll("svg").remove()
+
+d3.select("body").append("svg").attr('width',width).attr('height',height).attr('id','minard')
+
+locn1 = d3.geo.mercator().translate([width/2,height*(1/5)]).center([31,55]).scale(4000)
+
+layout = d3.layout.trail()
+    .positioner(function(d) {return locn1([d.lon,d.lat])})
+
+data = layout
+    .grouping(function(d) {return d.group})
+    .data(minard.army)
+    .coordType("xy")
+    .layout()
+
+
+wScale =
+    d3.scale.linear().domain([0,340000]).range([1,50])
+
+color = d3.scale.category10().range(["#bfa57a", "#bf837a", "#6dedb3"]);
+var join = d3.select("#minard").selectAll("line").data(data)
+
+var time1 = 0;
+longs = d3.extent(minard.army.map(function(d) {return d.x2}))
+retreatTime = d3.scale.linear().domain(longs).range([0,time1])
+attackTime = d3.scale.linear().domain(longs).range([time1,0])
+
+duration = function(d,element) {
+    dir1 = d.dir==-1? time1 : 0;
+    dir2 = d.dir==-1 ? attackTime(d[element]) : retreatTime(d[element]);
+    return dir1+dir2
+}
+
+minard.location = minard.location.map(function(d) {
+    var point = locn1([d.lon,d.lat])
+    d.x = point[0]
+    d.y = point[1]
+    return d
+})
+
+var location = d3
+    .select("#minard")
+    .selectAll("g")
+    .data(minard.location)
+
+
+join.enter().append("line")
+    .attr("x1",function(d) {return d.x1})
+    .attr("x2",function(d) {return d.x1})
+    .attr("y1",function(d) {return d.y1})
+    .attr("y2",function(d) {return d.y1})
+    .style("stroke",function(d) {return color(d.group)})
+    .style("stroke-width",function(d) {return wScale(d.size)})
+    .style("opacity",1)
+    .transition()
+    .ease("linear")//keeps the transition pointed in the right direction
+    .delay(function(d) { return d3.min([duration(d,'x1'),duration(d,'x2')]) })
+    .attr("x2",function(d) {return d.x2})
+    .attr("y2",function(d) {return d.y2})
+    .text("Temperatur")
+    .style("stroke-linecap","round")
+
+
+join.enter()
+    .append("text")
+    .style("font-size",14)
+    .style("opacity",0)
+    .attr("transform","translate(10,290)")
+    .transition()
+    .duration(0)
+    .text("Complete path of campaign by 3 groups of the army.")
+    .style("opacity",1)
+
+
+join.enter()
+    .append("text")
+    .style("font-size",14)
+    .style("opacity",0)
+    .attr("transform","translate(10,310)")
+    .transition()
+    .duration(0)
+    .text("Brown : Path of attack and retreat of Group 1")
+    .style("opacity",1)
+    .style('fill', '#bfa57a')
+
+join.enter()
+    .append("text")
+    .style("font-size",14)
+    .style("opacity",0)
+    .attr("transform","translate(10,330)")
+    .transition()
+    .duration(0)
+    .text("Red:    Path of attack and retreat of Group 2")
+    .style("opacity",1)
+    .style('fill', '#bf837a')
+
+join.enter()
+    .append("text")
+    .style("font-size",14)
+    .style("opacity",0)
+    .attr("transform","translate(10,350)")
+    .transition()
+    .duration(0)
+    .text(       "Green:  Path of attack and retreat of Group 3")
+    .style("opacity",1)
+    .style('fill', '#6dedb3')
+
+location = location.enter().append("g")
+    .attr("transform",function(d) { return "translate(" + d.x + "," + d.y + ")" })
+
+city = location.append("circle").attr('r',4).style("opacity",1).style("fill","black").transition().style("opacity",1)
+
+names = location.append("text").text(function(d) {return d.name})
+    .style("fill","black").attr("transform","translate(4,4)").transition().style("opacity",0).style("opacity",1)
+
+temp1 = d3.select("#minard").append("g").attr("transform","translate(0,350)")
+
+rangeTemp = d3.scale.linear().domain([1,-41]).range([0,200])
+
+yaxis = d3.svg.axis().orient("right").scale(rangeTemp)
+
+grid = temp1.append("g")
+.attr("transform","translate(" + locn1([37.6,55])[0] + "0)")
+
+temp1.append("g")
+    .attr("transform","translate(" + locn1([37.6,55])[0] + "0)").attr("class","y axis").style("opacity",1)
+    .call(yaxis)
+    .transition()
+    .style("opacity",1)
+
+temp1
+    .append("text")
+    .style("font-size",20)
+    .style("opacity",0)
+    .attr("transform","translate(700,230)")
+    .transition()
+    .duration(0)
+    .text("Temperature (C)")
+    .style("opacity",1)
+
+tempLayout = d3.layout.trail()
+    .positioner(function(d) {return [locn1([d.lon,55])[0],rangeTemp(d.temp)]})
+
+
+
+minard.temperature = minard.temperature.map(function(d) {
+d.dir = -1; d.temp = d.temp*1.25;
+return d})
+data2 = tempLayout
+    .grouping(function() {return 1})
+    .data(minard.temperature)
+    .coordType("xy")
+    .layout()
+
+tempLine= temp1.selectAll("line.temperature").data(data2)
+
+
+tempLine
+    .enter()
+    .append("line")
+    .attr("class","temperature")
+    .attr("x1",function(d) {return d.x1})
+    .attr("y1",function(d) {return d.y1})
+    .attr("x2",function(d) {return d.x1})
+    .attr("y2",function(d) {return d.y1})
+    .style("stroke-width",3)
+    .style("stroke","black")
+    .style("opacity",1)
+    .transition()
+    .ease("linear")
+    .attr("y2",function(d) {return d.y2})
+    .attr("x2",function(d) {return d.x2})
+    .style("stroke","round")
+
+
+
+grid
+.attr("class", "grid") 
+.call(yaxis.orient("right")
+            .tickSize(locn1([25.3,55])[0] - locn1([38,55])[0], 0, 0)
+.tickFormat("") 
+        )
+.style("opacity",0)
+.transition()
+.ease("linear")
+        .call(yaxis.orient("right")
+            .tickSize(locn1([25.3,55])[0] - locn1([38,55])[0], 0, 0)
+            .tickFormat("") 
+        )
+.style("opacity",0.5)
+}
+
+reload()
+
+</script>
+    </body>
+    </html>

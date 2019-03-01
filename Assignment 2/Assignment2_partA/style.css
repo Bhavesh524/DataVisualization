@@ -1,0 +1,108 @@
+* {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Cabin', sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	color: #474747;
+	width: 100%;
+	min-height: 100%;
+}
+
+figure {
+	position: relative;
+	float: left;
+	width: 50%;
+	min-width: 400px;
+	margin-top: -120px;
+}
+
+h1 {
+	width: 70%;
+	margin: 0 auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	text-align: center;
+	font-size: 24px;
+}
+
+.title, .subtitle, .caption, .label, .legend, figure {
+	font-family: baskerville, serif;
+}
+
+.title, .subtitle, .label, .legend {
+	text-transform: uppercase;
+}
+
+.title {
+	font-size: 20px;
+	width: 400px;
+	text-align: center;
+	display: block;
+	margin: 0 auto;
+	margin-top: 50px;
+}
+
+.subtitle {
+	font-size: 18px;
+	width: 50%;
+	min-width: 400px;
+	margin-top: 16px;
+	text-align: center;
+}
+
+	.subtitle.left {
+		float: left;
+	}
+
+	.subtitle.right {
+		float: right;
+	}
+
+	.caption p {
+		margin: 0;
+		text-indent: 12px;
+	}
+
+.canvas {
+	font-family: 'Cabin', sans-serif;
+ 	font-size: 14px;
+ 	fill: #474747;
+ 	font-weight: normal;
+}
+
+.wedge {
+	stroke: #aaa;
+	stroke-width: 1.5px;
+}
+
+.label {
+	font-size: 10px;
+}
+
+.disease {
+	fill: rgb(247, 247, 44);
+}
+
+.other {
+	fill: rgb(15, 17, 104);
+}
+
+.wounds {
+	fill: rgb(163, 1, 15);
+}
+
+.legend {
+	width: 400px;
+	height: 50px;
+	padding: 0 20px;
+	display: block;
+	position: relative;
+	margin: 0 auto;
+	top: -150px;
+	text-align: center;
+}
