@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/DB381AA9-BB12-394D-B050-21A212A797A0/main.js" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="http://gc.kis.v2.scr.kaspersky-labs.com/77798AB8-F07B-8C44-91AB-0C4539FD5241/abn/main.css"/><script src="https://d3js.org/d3.v4.js"></script>
+  <style>
+    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+    .line {
+      fill: none;
+      stroke: #FFCC32;
+      stroke-width: 1.5px;
+    }
+    .axisRed line{
+  stroke: #93af13;
+}
+
+.axisRed path{
+  stroke: #93af13;
+}
+
+.axisRed text{
+  fill: #93af13;
+}
+  </style>
+</head>
+
+<body bgcolor=#091f2d>
+  <script>
+    // Margin setup
+    var margin = {top: 20, right: 30, bottom: 20, left: 100},
+        width = 850 - margin.left - margin.right,
+        height = 430 - margin.top - margin.bottom;
+
+    // Basic SVG canvas
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //
+    var parseDate = d3.timeParse("%Y-%m");
+    var displayDate = d3.timeFormat("%b %y");
+    var displayValue = d3.format(",.0f");
+
+    // Temporal scale
+    var x = d3.scaleLinear().range([0, width]);
+
+
+		// Linear scale
+    var y = d3.scaleLinear().range([height, 0]);
+
+    var line = d3.line()
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Position); })
+
+    var g = svg.append("g")
+    	.attr("transform", "translate(10, 0)");
+
+   /* Data in strings like it would be if imported from a csv */
+ var record_data = []
+
+    d3.csv("data/MI_record.csv", function(error, recorddata) {
+    //print(parkdata)
+    console.log(recorddata)
+    var obj = new Array();
+    for (i in recorddata) {
+        var obj = {};
+        obj.Year = recorddata[i].Year;
+        obj.Total = recorddata[i].Total;
+        obj.Wins = recorddata[i].Wins;
+        obj.Losses = recorddata[i].Losses;
+        obj.NR = recorddata[i].NR;
+        obj.percent_win = recorddata[i].percent_win;
+        obj.Position = recorddata[i].Position;
+        record_data.push(obj);
+          }
+
+    x.domain(d3.extent(record_data, function(d) { return d.Year; }));
+    y.domain([d3.max(record_data, function(d) { return d.Position; }), 1]);
+
+      svg.selectAll("text").data(record_data).enter()
+       .append("text")
+        .attr("y", 420)
+        .style("font-size", 10)
+        .style("font-family", "monospace")
+        .text(function(d, i) { return d.Year; });
+
+      g.selectAll(".value").data([record_data[record_data.length -1]]).enter()
+       .append("text")
+        .attr("class", "value")
+        .attr("y", function(d) { return y(d.Position); })
+        .attr("x", width - 20)
+        .style("font-size", 20)
+        .style("font-family", "monospace")
+        .text(function(d, i) { return d.Position; });
+
+  // Add the X Axis
+  g.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      <!--.style("stroke", "#FFCC32")-->
+      .attr("class", "axisRed")
+      .call(d3.axisBottom(x))
+      .append("text")
+      .classed("label", true)
+      .attr("x", width)
+      .attr("y", -margin.bottom)
+      .style("text-anchor", "end")
+      .style("fill", "#93af13")
+      .style("font", "30px times")
+      .text("Year");
+
+
+  // Add the Y Axis
+  g.append("g")
+      <!--.style("stroke", "#FFCC32")-->
+      .attr("class", "axisRed")
+      .call(d3.axisLeft(y))
+      .append("text")
+      .classed("label", true)
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left)
+      .attr("dy", "2em")
+      .style("text-anchor", "end")
+      .style("fill", "#93af13")
+      .style("font", "30px times")
+      .text("Position");
+
+
+  g.append("path")
+      .data([record_data])
+      .attr("class", "line")
+      <!--.attr("d", valueline)-->
+      .attr("fill", "#cce5df")
+      .attr("stroke", "#69b3a2")
+      .attr("stroke-width", 2.5)
+      .attr("d", d3.area()
+        .x(function(d) { return x(d.Year) })
+        .y(function(d) { return y(d.Position) })
+        )
+
+      g.selectAll("circle").data(record_data).enter()
+       .append("circle")
+        .attr("cx", function(d) { return x(d.Year); })
+        .attr("cy", function(d) { return y(d.Position); })
+        .attr("r", function(d, i) { return 5; })
+        .style("fill", "#EF312F")
+        .on("mouseover", function(d){
+
+        	d3.select(this).transition().duration(200).style("fill", "#d30715");
+
+          g.selectAll("#tooltip").data([d]).enter().append("text")
+            .attr("id", "tooltip")
+            .text(function(d, i) { return d.Position; })
+            .style("fill", "#F79433")
+            .style("font-weight", "bold")
+            .attr("y", function(d) {return y(d.Position) - 12})
+            .attr("x", function(d) { return x(d.Year); })
+
+
+          g.selectAll("#tooltip_path").data([d]).enter().append("line")
+            .attr("id", "tooltip_path")
+            .attr("class", "line")
+            .attr("d", line)
+            .attr("x1", function(d) {return x(d.Year)})
+            .attr("x2", function(d) {return x(d.Year)})
+            .attr("y1", height)
+            .attr("y2", function(d) {return y(d.Position)})
+            .attr("stroke", "blue")
+            .style("stroke-dasharray", ("3, 3"));
+        })
+        .on("mouseout", function(d) {
+          d3.select(this).transition().duration(500).style("fill", "#EF312F");
+
+          g.selectAll("#tooltip").remove();
+          g.selectAll("#tooltip_path").remove();
+        });
+
+        g.selectAll("path").data([record_data]).enter().append("path")
+          .attr("class", "line")
+          .attr("d", line);
+
+        <!--svg.append("g")-->
+          <!--.attr("class", "axis axis&#45;&#45;x")-->
+          <!--.attr("transform", "translate(0," + height + ")")-->
+          <!--.call(d3.axisBottom(x));-->
+
+
+    });
+
+  </script>
+
+</body>
